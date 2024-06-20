@@ -31,3 +31,7 @@
     * Remote Procedure Calling / Function execution -- cause an external system to take some specific pre-defined action.
     * ... and so on ... 
 
+
+* A note about Python...
+    * There is built in support to use 
+

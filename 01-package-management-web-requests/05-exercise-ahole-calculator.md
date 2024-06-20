@@ -36,6 +36,20 @@ Your program should be able to do the following:
 
 Save each individual judgement vote summary to a file. Devise a scheme for naming the files and ensure a specific folder exists (or create one) to hold each new file. 
 
+## Tips For Getting Started
+
+* Break the task into smaller chunks...
+    * First get all the posts from /r/AmITheAsshole
+    * Examine the response JSON to figure out what you need (all the top level URLs!)
+    * Figure out how to loop over them
+    * Consider starting with just the first post URL and...
+        * Figure out where the comments are, and therefore how to loop over them
+        * Search for the relevant pieces of text in each comment
+        * Tally them somehow
+    * Report the results!
+
+Use your debugger and breakpoints to see the data mid-session. 
+
 ### Helpful Resources
 
 Reddit provides this data in a textual format called JavaScript Object Format (JSON). This format is ubiquitous on the web for a variety of reasons. Although we use built in tools to parse this JSON formatted data into a deeply nested Python dictionary, you may still want to read this [overview of using the JSON format in Python](https://realpython.com/python-json/).

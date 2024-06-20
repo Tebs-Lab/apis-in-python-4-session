@@ -1,36 +1,6 @@
 import requests
 
-# Sometimes HTTP requests include "query parameters" to indicate
-# additional information that is not meant to be in the URL.
-# For example, the github API allows you to search for repositories
-# using the 'q' parameter. 
-# Reference: https://docs.github.com/en/rest/reference/search
-# Reference 2: https://docs.github.com/en/search-github/searching-on-github/searching-for-repositories
-
-# Note the "params" option is a dictionary.
-# 'q' is the name of the query parameter, and the value is 'org:Tebs-Lab+language:python'
-response = requests.get(
-    'https://api.github.com/search/repositories',
-    params={'q': 'org:Tebs-Lab'}
-)
-
-# Query parameters are ultimately expressed as part of the URL:
-print(response.url, "\n")
-
-# Again, the Github API is returning JSON
-content = response.json()
-print(content)
-
-
-# Lets look at the names and urls of the matched repositories.
-for repo in content['items']:
-    print(f'Name: {repo["name"]}\n{repo["html_url"]}\n')
-
-# That last repo looks interesting... 
-# lets save it for later.
-cool_repo = content['items'][-1]['html_url']
-
-# Another way you may want to modify your requests is by 
+# One way you'll want to modify your requests is by 
 # adding header values. This is also done using a dictionary.
 
 # In this example we're setting the User-Agent header, which 

@@ -31,6 +31,7 @@ Write a script or CLI application that uses the Github API to generate a detaile
     * Print the title, username of the user who opened it, and when it was created
     * Sometimes there may be so many results that they are 'paginated'. Just use whatever is returned, in the first response. For **bonus points**, fetch all the additional pages.
 
+* Small warning: everything labeled as **bonus points** (and especially the commit message for each branch) will require many more requests per run of your script, which may trigger Github's rate limiting. I suggest you complete all non-bonus features first.
 
 ## Some Tips
 

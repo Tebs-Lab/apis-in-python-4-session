@@ -86,7 +86,7 @@ def extract_branches_details(repo_owner, repo_name, output_file):
         # Pagination
         if branches_resp.links and branches_resp.links['next']:
             branches_resp = requests.get(
-                branches_resp.links['next'],
+                branches_resp.links['next']['url'],
                 headers={
                     'Accept': 'application/json',
                     'User-Agent': "Teb's Lab Github Exercise bot"
@@ -124,7 +124,7 @@ def extract_pull_request_details(repo_owner, repo_name, output_file):
         # Pagination
         if pulls_resp.links and pulls_resp.links['next']:
             pulls_resp = requests.get(
-                pulls_resp.links['next'],
+                pulls_resp.links['next']['url'],
                 headers={
                     'Accept': 'application/json',
                     'User-Agent': "Teb's Lab Github Exercise bot"

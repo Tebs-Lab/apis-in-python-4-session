@@ -1,5 +1,16 @@
 import argparse
+from os import environ 
 import requests
+
+###### NOTE THAT #######
+# This solution uses authentication because the bonus point problems tend to 
+# quickly run into rate limiting issues without authentication. 
+# If you have an environment variable called GITHUB_ACCESS_TOKEN with a valid
+# access token it will be used to authenticate. If you don't the code will run
+# but you'll surely reach your rate limit before the report finishes.
+########################
+
+ACCESS_TOKEN = environ['GITHUB_ACCESS_TOKEN']
 
 def main():
     parser = argparse.ArgumentParser(
@@ -33,7 +44,8 @@ def extract_top_level_details(repo_owner, repo_name, output_file):
         f'https://api.github.com/repos/{repo_owner}/{repo_name}',
         headers={
             'Accept': 'application/json',
-            'User-Agent': "Teb's Lab Github Exercise bot"
+            'User-Agent': "Teb's Lab Github Exercise bot",
+            'Authorization': f'Bearer {ACCESS_TOKEN}'
         }
     )
 
@@ -66,7 +78,8 @@ def extract_branches_details(repo_owner, repo_name, output_file):
         f'https://api.github.com/repos/{repo_owner}/{repo_name}/branches',
         headers={
             'Accept': 'application/json',
-            'User-Agent': "Teb's Lab Github Exercise bot"
+            'User-Agent': "Teb's Lab Github Exercise bot",
+            'Authorization': f'Bearer {ACCESS_TOKEN}'
         })
     
     while True:
@@ -76,7 +89,8 @@ def extract_branches_details(repo_owner, repo_name, output_file):
                 f'https://api.github.com/repos/{repo_owner}/{repo_name}/commits/{b["commit"]["sha"]}',
                 headers={
                     'Accept': 'application/json',
-                    'User-Agent': "Teb's Lab Github Exercise bot"
+                    'User-Agent': "Teb's Lab Github Exercise bot",
+                    'Authorization': f'Bearer {ACCESS_TOKEN}'
             })
 
             commit_data = commit_resp.json()
@@ -89,7 +103,8 @@ def extract_branches_details(repo_owner, repo_name, output_file):
                 branches_resp.links['next']['url'],
                 headers={
                     'Accept': 'application/json',
-                    'User-Agent': "Teb's Lab Github Exercise bot"
+                    'User-Agent': "Teb's Lab Github Exercise bot",
+                    'Authorization': f'Bearer {ACCESS_TOKEN}'
             })
         else:
             break
@@ -111,7 +126,8 @@ def extract_pull_request_details(repo_owner, repo_name, output_file):
         params={'state': 'open'},
         headers={
             'Accept': 'application/json',
-            'User-Agent': "Teb's Lab Github Exercise bot"
+            'User-Agent': "Teb's Lab Github Exercise bot",
+            'Authorization': f'Bearer {ACCESS_TOKEN}'
         }
     )
     
@@ -127,7 +143,8 @@ def extract_pull_request_details(repo_owner, repo_name, output_file):
                 pulls_resp.links['next']['url'],
                 headers={
                     'Accept': 'application/json',
-                    'User-Agent': "Teb's Lab Github Exercise bot"
+                    'User-Agent': "Teb's Lab Github Exercise bot",
+                    'Authorization': f'Bearer {ACCESS_TOKEN}'
             })
         else:
             break
@@ -149,7 +166,8 @@ def extract_code_frequency_details(repo_owner, repo_name, output_file):
         code_frequency_url,
         headers={
             'Accept': 'application/json',
-            'User-Agent': "Teb's Lab Github Exercise bot"
+            'User-Agent': "Teb's Lab Github Exercise bot",
+            'Authorization': f'Bearer {ACCESS_TOKEN}'
         })
     
     if code_frequency_resp.status_code == 202:

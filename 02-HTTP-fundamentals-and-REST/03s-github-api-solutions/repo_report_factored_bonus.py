@@ -98,7 +98,7 @@ def extract_branches_details(repo_owner, repo_name, output_file):
             output_file.write(f'{b["name"]} at commit {b["commit"]["sha"]}\nmessage: {commit_message}\n\n')
         
         # Pagination
-        if branches_resp.links and branches_resp.links['next']:
+        if branches_resp.links and branches_resp.links.get('next'):
             branches_resp = requests.get(
                 branches_resp.links['next']['url'],
                 headers={
@@ -138,7 +138,7 @@ def extract_pull_request_details(repo_owner, repo_name, output_file):
             output_file.write(f'{pr["title"]} opened by {pr["user"]["login"]} on {pr["created_at"]}\n')
 
         # Pagination
-        if pulls_resp.links and pulls_resp.links['next']:
+        if pulls_resp.links and pulls_resp.links.get('next'):
             pulls_resp = requests.get(
                 pulls_resp.links['next']['url'],
                 headers={
@@ -178,7 +178,7 @@ def extract_code_frequency_details(repo_owner, repo_name, output_file):
         code_frequency_data = code_frequency_resp.json()
         code_frequency_printable = f'Additions: {code_frequency_data[1]}\n Deletions: {code_frequency_data[2]}\n'
 
-    output_file.write('====Code Frequency====\n')
+    output_file.write('\n====Code Frequency====\n')
     output_file.write(code_frequency_printable)
 
 if __name__ == '__main__':

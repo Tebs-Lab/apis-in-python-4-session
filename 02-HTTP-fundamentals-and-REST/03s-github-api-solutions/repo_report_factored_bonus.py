@@ -10,7 +10,12 @@ import requests
 # but you'll surely reach your rate limit before the report finishes.
 ########################
 
-ACCESS_TOKEN = environ['GITHUB_ACCESS_TOKEN']
+# They're always the same in this tool, so for convenience I made them a constant
+HEADERS = {
+    'Accept': 'application/json',
+    'User-Agent': "Teb's Lab Github Exercise bot",
+    'Authorization': f'Bearer {environ["GITHUB_ACCESS_TOKEN"]}'
+}
 
 def main():
     parser = argparse.ArgumentParser(
@@ -40,14 +45,7 @@ def extract_top_level_details(repo_owner, repo_name, output_file):
     Query the Github API then write the following to the specified file:
         Owner, name, URL, description, number of stargazers
     """
-    repo_response = requests.get(
-        f'https://api.github.com/repos/{repo_owner}/{repo_name}',
-        headers={
-            'Accept': 'application/json',
-            'User-Agent': "Teb's Lab Github Exercise bot",
-            'Authorization': f'Bearer {ACCESS_TOKEN}'
-        }
-    )
+    repo_response = requests.get(f'https://api.github.com/repos/{repo_owner}/{repo_name}',headers=HEADERS)
 
     repo_response_content = repo_response.json()
     repo_owner = repo_response_content['owner']['login']
@@ -74,24 +72,12 @@ def extract_branches_details(repo_owner, repo_name, output_file):
     """
     output_file.write('====Branches====\n')
     
-    branches_resp = requests.get(
-        f'https://api.github.com/repos/{repo_owner}/{repo_name}/branches',
-        headers={
-            'Accept': 'application/json',
-            'User-Agent': "Teb's Lab Github Exercise bot",
-            'Authorization': f'Bearer {ACCESS_TOKEN}'
-        })
+    branches_resp = requests.get(f'https://api.github.com/repos/{repo_owner}/{repo_name}/branches', headers=HEADERS)
     
     while True:
         branches_data = branches_resp.json()
         for b in branches_data:
-            commit_resp = requests.get(
-                f'https://api.github.com/repos/{repo_owner}/{repo_name}/commits/{b["commit"]["sha"]}',
-                headers={
-                    'Accept': 'application/json',
-                    'User-Agent': "Teb's Lab Github Exercise bot",
-                    'Authorization': f'Bearer {ACCESS_TOKEN}'
-            })
+            commit_resp = requests.get(f'https://api.github.com/repos/{repo_owner}/{repo_name}/commits/{b["commit"]["sha"]}',headers=HEADERS)
 
             commit_data = commit_resp.json()
             commit_message = commit_data['commit']['message']
@@ -99,13 +85,7 @@ def extract_branches_details(repo_owner, repo_name, output_file):
         
         # Pagination
         if branches_resp.links and branches_resp.links.get('next'):
-            branches_resp = requests.get(
-                branches_resp.links['next']['url'],
-                headers={
-                    'Accept': 'application/json',
-                    'User-Agent': "Teb's Lab Github Exercise bot",
-                    'Authorization': f'Bearer {ACCESS_TOKEN}'
-            })
+            branches_resp = requests.get(branches_resp.links['next']['url'], headers=HEADERS)
         else:
             break
 
@@ -124,11 +104,7 @@ def extract_pull_request_details(repo_owner, repo_name, output_file):
     pulls_resp = requests.get(
         f'https://api.github.com/repos/{repo_owner}/{repo_name}/pulls',
         params={'state': 'open'},
-        headers={
-            'Accept': 'application/json',
-            'User-Agent': "Teb's Lab Github Exercise bot",
-            'Authorization': f'Bearer {ACCESS_TOKEN}'
-        }
+        headers=HEADERS
     )
     
     output_file.write('====Pull Requests====\n')
@@ -139,13 +115,7 @@ def extract_pull_request_details(repo_owner, repo_name, output_file):
 
         # Pagination
         if pulls_resp.links and pulls_resp.links.get('next'):
-            pulls_resp = requests.get(
-                pulls_resp.links['next']['url'],
-                headers={
-                    'Accept': 'application/json',
-                    'User-Agent': "Teb's Lab Github Exercise bot",
-                    'Authorization': f'Bearer {ACCESS_TOKEN}'
-            })
+            pulls_resp = requests.get(pulls_resp.links['next']['url'], headers=HEADERS)
         else:
             break
 
@@ -161,14 +131,7 @@ def extract_code_frequency_details(repo_owner, repo_name, output_file):
         The number of additions and deletions this week
     """
     code_frequency_url = f'https://api.github.com/repos/{repo_owner}/{repo_name}/stats/code_frequency'
-
-    code_frequency_resp = requests.get(
-        code_frequency_url,
-        headers={
-            'Accept': 'application/json',
-            'User-Agent': "Teb's Lab Github Exercise bot",
-            'Authorization': f'Bearer {ACCESS_TOKEN}'
-        })
+    code_frequency_resp = requests.get(code_frequency_url, headers=HEADERS)
     
     if code_frequency_resp.status_code == 202:
         code_frequency_printable = "Code frequency currently unavailable, try later.\n"

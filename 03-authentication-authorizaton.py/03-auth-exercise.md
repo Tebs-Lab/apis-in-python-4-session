@@ -43,3 +43,12 @@ You are to write a Python script that, when you run it, does all of the followin
     * Successfully add 2 files, then comment out that code and...
     * Create an issue, then comment out that code and... 
     * ... and so on ...
+
+## Bonus Points... [Not Free, But Cheap]
+
+The OpenAI API uses pretty much the same authentication scheme as Github's API. Challenge yourself by:
+
+* Sign up for an account on OpenAI's platform: [https://platform.openai.com/docs/overview](https://platform.openai.com/docs/overview)
+* Following these instructions for account setup, API key generation, and Python library installation [https://platform.openai.com/docs/quickstart/account-setup](https://platform.openai.com/docs/quickstart/)
+    * Technically you do not need to use the Python library, but it does make life easier compared to using Requests directly. 
+* Now, instead of using your own text for the readme, issue description, and other such blocks of text... Have OpenAI's models generate that stuff for you!

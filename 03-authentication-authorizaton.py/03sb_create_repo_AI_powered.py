@@ -1,7 +1,10 @@
 import base64
 from os import environ # This is the standard way to access env variables in Python
-import requests
+
 import webbrowser
+
+import requests
+from openai import OpenAI
 
 # To reduce code duplication
 HEADERS = {
@@ -11,14 +14,34 @@ HEADERS = {
 }
 
 def main():
+    # Initialize the OpenAI client
+    client = OpenAI()
+
+    willing_to_spend = input('WAIT! Running this script will use some of your OpenAI budget. Type "yes" to continue.\n')
+    if willing_to_spend != 'yes':
+        print("You did not type 'yes' so this program is exiting.")
+        quit()
+
     # Fetch the authenticated user to get the login name, which will be needed later
     response = requests.get('https://api.github.com/user', headers=HEADERS)
-    
     user_name = response.json()['login']
+
+    # Keeping these static for simplicity
     repo_name = input("Type the name of the repo. No spaces allowed.\n")
     repo_description = 'I made this repo using a Python script. That script is even in this repo!! Neat.'
+
+    # Use gpt-3.5-turbo to generate a markdown file.
+    readme_completion = client.chat.completions.create(
+    model="gpt-3.5-turbo", # Because its the cheapest one
+        messages=[
+            {"role": "system", "content": "You are a utilitarian assistant responding simply and concisely"},
+            {"role": "user", "content": "Generate a readme file for a github repository. Use markdown. Use 1000 words or less."}
+        ]
+    )
+    readme_content = readme_completion.choices[0].message.content
+    
     create_repo_response = create_repo(repo_name, repo_description)
-    f1_response = add_file_to_repo(user_name, repo_name, 'readme.md', '# Auto Generated\n\n Isn\'t this sweet?')
+    f1_response = add_file_to_repo(user_name, repo_name, 'readme.md', readme_content)
 
     with open(__file__, 'r') as this_file:
         this_file_as_str = this_file.read()
@@ -27,10 +50,29 @@ def main():
     # We need this for later!
     hash_for_new_branch = f2_response.json()['commit']['sha']
 
-    create_issue_response = create_issue(user_name, repo_name, "This repo is actually whack.", "It's my view that you should fix it.")
+    # Use AI to generate the body of the issue
+    issue_completion = client.chat.completions.create(
+    model="gpt-3.5-turbo", # Because its the cheapest one
+        messages=[
+            {"role": "system", "content": "You are a utilitarian assistant responding simply and concisely"},
+            {"role": "user", "content": "Generate the body of a Github issue related to autogeneration of Github repositories using the Github API. Use markdown. Use less than 500 words."}
+        ]
+    )
+    issue_content = issue_completion.choices[0].message.content
+    create_issue_response = create_issue(user_name, repo_name, "This repo is actually whack.", issue_content)
     
     new_branch_name = 'a_branch'
     create_branch_response = create_branch(user_name, repo_name, hash_for_new_branch, new_branch_name)
+
+    # Use AI to modify the body it previously created.
+    modification_completion = client.chat.completions.create(
+    model="gpt-3.5-turbo", # Because its the cheapest one
+        messages=[
+            {"role": "system", "content": "You are a utilitarian assistant responding simply and concisely"},
+            {"role": "user", "content": f"Modify the following text to make sure it's at an 8th grade reading level:\n{readme_completion}"}
+        ]
+    )
+    modified_readme = modification_completion.choices[0].message.content
 
     # We need some data from the file we're gonna modify:
     f1_contents = f1_response.json()
@@ -39,7 +81,7 @@ def main():
         repo_name, 
         f1_contents['content']['path'], 
         f1_contents['content']['sha'], 
-        '# Auto Generated\n\n Isn\'t this sweet?\n\n It\'s way sweet.', 
+        modified_readme, 
         new_branch_name
     )
 

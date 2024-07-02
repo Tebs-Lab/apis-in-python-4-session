@@ -1,39 +1,32 @@
+# start this server with the command: fastapi dev 03_RPC_api_backend.py
+from fastapi import FastAPI
 import requests
-import pathlib
 
-# Reusable format string for printing
-AHOLE_FORMAT_STRING = """
-URL: {url}
-==========================
-The Situation: {situation}
-==========================
+app = FastAPI()
 
-Votes:
-YTA: {YTA}
-NTA: {NTA}
-ESH: {ESH}
-NAH: {NAH}
-"""
+# So far, we've done very basic CRUD operations, in a way that is REST compliant.
+# So now, lets look at a remote procedure call... hopefully this code looks familiar!
+@app.get("/github_repos/{org_name}")
+def get_repos(org_name: str):
 
-def main():
-    top_urls = fetch_top_urls()
+    # Yo Dog, I heard you like APIs so we put an API call inside your API server...
+    response = requests.get(
+        f'https://api.github.com/orgs/{org_name}/repos',
+    )
 
-    # Bonus, create a folder to store the summary judgments:
-    output_dir = pathlib.Path(__file__).parent / 'judgments'
-    output_dir.mkdir(exist_ok=True)
-    
-    print(f'======Top Daily AHole Judgements====')
-    for url in top_urls:
-        votes = compute_votes_from_post_url(url)
-        summary_text = AHOLE_FORMAT_STRING.format(url=url, **votes)
-        print(summary_text)
+    list_of_repos = response.json()
+    just_repo_names = [repo['name'] for repo in list_of_repos]
 
-        # Bonus: write each post to it's own file!
-        post_mini_title = url.split('/')[-2]
+    return just_repo_names
 
-        with open(output_dir / f'{post_mini_title}', 'w') as outfile:
-            outfile.write(summary_text)
 
+@app.get("/todays_top_ahole")
+def get_top_ahole_reddit():
+    top_post_url = fetch_top_urls(1)[0]
+    return compute_votes_from_post_url(top_post_url)
+
+
+# This function was stolen directly from the first exercise's solution
 def fetch_top_urls(n_posts=-1):
     # Get the top posts from today.
     all_listings_response = requests.get(
@@ -50,7 +43,7 @@ def fetch_top_urls(n_posts=-1):
 
     return top_n_post_urls
 
-
+# This function was stolen directly from the first exercise's solution
 def compute_votes_from_post_url(url):
     # fetch the comments
     comment_response = requests.get(
@@ -82,5 +75,4 @@ def compute_votes_from_post_url(url):
     votes['situation'] =  comments_json[0]['data']['children'][0]['data']['selftext']
     return votes
 
-if __name__ == '__main__':
-    main()
+# Mini Exercise: Add another route 

@@ -71,7 +71,7 @@ Get-Command pip
 This should point to a file inside the `venv` folder we just created. Once you've confirmed that, run the following (on all systems this command is the same):
 
 ```
-pip install requests
+pip install requests fastapi
 ```
 
-Now you should be able to run the python programs in this folder.
+Now you should be able to run the python programs in this repo.

@@ -1,4 +1,4 @@
-# start this server with the command: fastapi dev 02_api_backend.py
+# start this server with the command: fastapi dev 02_REST_api_backend.py
 from fastapi import FastAPI, HTTPException, Body
 
 app = FastAPI()

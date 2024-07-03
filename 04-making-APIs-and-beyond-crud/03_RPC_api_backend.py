@@ -20,6 +20,7 @@ def get_repos(org_name: str):
     return just_repo_names
 
 
+# Another route that steals code from a previous exercise...
 @app.get("/todays_top_ahole")
 def get_top_ahole_reddit():
     top_post_url = fetch_top_urls(1)[0]
@@ -75,4 +76,6 @@ def compute_votes_from_post_url(url):
     votes['situation'] =  comments_json[0]['data']['children'][0]['data']['selftext']
     return votes
 
-# Mini Exercise: Add another route 
+# Mini Exercise: Add a POST route to this app that takes as input 
+# a filename and text. Your route should create a file with the 
+# specified name and containing the specified text. 

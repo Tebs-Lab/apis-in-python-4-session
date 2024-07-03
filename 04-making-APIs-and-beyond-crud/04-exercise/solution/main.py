@@ -9,13 +9,12 @@ import github
 
 # Some setup code to standardize serialization locations
 # and make them if they don't already exist
-JUDGEMENTS_DIR = pathlib.Path(__file__).parent / 'judgments'
+JUDGEMENTS_DIR = pathlib.Path(__file__).parent / 'judgements'
 JUDGEMENTS_DIR.mkdir(exist_ok=True)
 MOST_WHOLESOME = JUDGEMENTS_DIR / 'current_most_wholesome'
 MOST_WHOLESOME.touch()
 
 app = FastAPI()
-
 
 @app.get("/serialize_todays_aholes")
 def serialize_todays_aholes():
@@ -60,3 +59,26 @@ def update_wholesome_gist():
     # helps with debugging sometimes.
     github_response = github.upload_to_gist(votes)
     return github_response
+
+@app.post('/judgements')
+def manually_create_judgement(filename: str = Body(), situation: str = Body(), YTA: int = Body(), NTA: int = Body(), NAH: int = Body(), ESH: int = Body()):
+    votes = {
+        'situation': situation,
+        'YTA': YTA,
+        'NTA': NTA,
+        'ESH': ESH,
+        'NAH': NAH
+    }
+    
+    with open(JUDGEMENTS_DIR / filename, 'w') as f:
+        json.dump(votes, f)
+
+    return Response(votes, status_code=201)
+
+@app.delete('/judgements')
+def delete_judgements():
+    for judgement in JUDGEMENTS_DIR.iterdir():
+        judgement.unlink()
+
+    return Response(status_code=200)
+    

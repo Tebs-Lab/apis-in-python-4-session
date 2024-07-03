@@ -1,4 +1,4 @@
-# An RPC Server
+# Building and Using Your Own API
 
 In this exercise you'll be challenged to write two pieces of code.
 
@@ -9,22 +9,30 @@ In this exercise you'll be challenged to write two pieces of code.
 
 ## The Tasks
 
-A route each for:
+### The Server 
 
-* Download the day's judgements and save them each into a file
-* Process all the existing judgement files and determine the most wholesome (largest share of NTA votes)
+Using FastAPI, create a server with one route each for performing the following tasks:
+
+* Download the day's judgements from Reddit and save them each into a file.
+* Process all the existing judgement files and determine the most wholesome based on largest share of NTA votes.
     * Make a brand new file that is always named `current_most_wholesome`
 * A simple GET route that returns the contents of `current_most_wholesome` as JSON
 * Make or replace a private gist on your Github account so that it contains whatever the `current_most_wholesome` file contains
 
-A script that uses the API to:
+**Note that:** You will have to make some decisions on your own about how and where to store these files, and what their format should be. 
+
+### The Script
+
+A script that uses the API server to:
 
 * Gets today's aholes
 * Refresh the current_most_wholesome
 * Updates the Github gist
 
-### Bonus Points
+## Bonus Points
 
-* Add a POST route that allows you to manually add a story to the list of files
-* Add a GET route that allows you to fetch the contents any story by it's file name
+If you finish early, try adding these two routes to your server, and utilizing them in your script!
+
+* Add a POST route that allows you to manually add a story to the list of files.
+    * Ensure whatever JSON data you persist has all (and only) the same values as your serialization format.
 * Add a DELETE route that allows you to delete all the existing files.
